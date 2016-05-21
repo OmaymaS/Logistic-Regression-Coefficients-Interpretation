@@ -6,7 +6,6 @@ output:
   html_document: 
     keep_md: yes
     toc: yes
-    toc_depth: 5
 ---
 
 ## Introduction
@@ -96,12 +95,14 @@ We can see that:
 - **The log odds of the probability of being in an honor class $log(O)$ = `r hlogodds`** which is the intercept value we got from fitting the logistic regression model.
 
 
-### Logistic Regression With a Single Predictor Variable
-Here we will use a binary predictor variable **femela** in our model:
+### Logistic Regression With a Single Dichotomous Predictor Variable
+Here we will use a binary predictor variable **female** in our model:
 $$logit(p)=\beta_{0}+ \beta_{1}*female$$
 
 #### Fitting The Model
 ```{r Ex2}
+#
+#fit the model with female as the predictor
 f1<-glm(hon~female,data = hd,family = binomial)
 
 summary(f1)$coeff
@@ -111,7 +112,7 @@ We can see that:
 
 - The intercept= **`r round(coef(f1)[1],5)`** which corresponds to **the log odds for males being in an honor class** (since male is the reference group, female=0).
 
-- The coeffecient for female= **`r round(coef(f1)[2],5)`** which corresponds to **the log of odds ratio between the female group and male group**. The odds ratio equals **`r round(exp(coef(f1)[2]),2)`** which means the odds for females are about 81% higher than the odds for males.
+- The coeffecient for female= **`r round(coef(f1)[2],5)`** which corresponds to **the log of odds ratio between the female group and male group**. The odds ratio equals **`r round(exp(coef(f1)[2]),2)`** which means **the odds for females are about 81% higher than the odds for males**.
 
 #### Calculating The Log Odds Manually
 
@@ -124,7 +125,52 @@ honor1<-hd %>%
         round(.,5)
 
 pander(honor1)
-# http://stackoverflow.com/questions/12201439/is-there-a-difference-between-the-r-functions-fitted-and-predict
+
 ```
 
+### Logistic Regression With a Single Continuous Predictor Variable
+Here we will use a single continuous predictor variable **math** in our mode:
+$$logit(p)=\beta_{0}+ \beta_{1}*math$$
 
+#### Fitting The Model
+```{r}
+#fit the model with math as the predictor
+f2<-glm(hon~math,data = hd,family = binomial)
+
+summary(f2)$coeff
+```
+In this case:
+
+- The intercept=  **`r round(coef(f2)[1],5)`** which is interpreted as **the log odds of a student with a math score of zero being in an honors class**.
+
+- The coeffecient for math= **`r round(coef(f2)[2],5)`**  which is interpreted as **the expected change in log odds for a one-unit increase in the math score**. The odds ratio can be calculated by exponentiating this value to get **`r round(exp(coef(f2)[2]),5)`** which means **we expect to see about 17% increase in the odds of being in an honors class, for a one-unit increase in math score**
+
+
+
+We can also confirm this interpretation by looking at the predicted values using the estimated coeffecients, i.e. the equation:
+
+$logit(p)=\frac{p}{1-p}=`r round(coef(f2)[1],5)`+ `r round(coef(f2)[2],5)`*math$
+
+ 
+First we will add a column with the predicted values to our original data frame.
+```{r}
+hd$predicted<-predict(f2)
+ 
+```
+
+Then we will examine the effect of a one-unit increase in math score by subtracting the corresponding log odds. For example, we will look at the math scores at 54 and 53 and calculate the difference in the estimated log odds. Then exponentiate it to get the odds ratio.
+```{r}
+s1<-hd$predicted[hd$math==53][1]
+s2<-hd$predicted[hd$math==54][1]
+
+logodd_diff<-s2-s1
+odd_ratio<-exp(logodd_diff)
+
+```
+We can see that:
+
+- $logit(p)_{(math=54)}-logit(p)_{(math=53)}= `r logodd_diff`$
+
+- $Odds_{(math=54)}/Odds_{(math=53)} = `r odd_ratio `$
+
+Which goes with the interpretation mentioned earlier.
