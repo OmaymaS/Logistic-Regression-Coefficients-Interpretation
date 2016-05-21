@@ -1,0 +1,130 @@
+---
+title: "Interpreting Odd Ratios in Logistic Regression"
+author: "OmaymaS"
+date: "May 20, 2016"
+output: 
+  html_document: 
+    keep_md: yes
+    toc: yes
+    toc_depth: 5
+---
+
+## Introduction
+Interpreting the logistic regression's coefficients is somehow tricky. Looking at some examples beside doing the math helps getting the concept of odds, odds ratios and consequently getting more familiar with the meaning of the regression coeffecients. The following examples are mainly taken from [IDRE UCLE FAQ Page](http://www.ats.ucla.edu/stat/mult_pkg/faq/general/odds_ratio.htm) and they are recreated with R.
+
+## Probability, Odds and Log of Odds
+Let's say that the probability of success is $p=0.8$, then the probability of failure is $1-p=0.2$. The odds of success is $\frac{p}{1-p}=\frac{0.8}{1-0.8}=4$, i.e. the odds of success is 4 to 1 and the odds of failure is 0.25 to 1.
+
+Note that:
+
+- **Probability** ranges from 0 to 1
+
+- **Odds** range from 0 to $\infty$
+
+- **Log Odds** range from $-\infty$ to $\infty$
+
+That is why the log odds are used to avoid modeling a variable with a restricted range such as probability.
+
+## Logistic Regression
+Logistic regression models the the logit-transformed probability as a linear relationship with the predictor variables as follows:
+
+$logit(p)=\frac{p}{1-p}=\beta_{0}+\beta_{1} x_{1}+...+\beta_{x} x_{x}$
+
+or in terms of probabilities:
+
+$p=\frac{exp(\beta_{0}+\beta_{1} x_{1}+...+\beta_{x} x_{x})}{1+exp(\beta_{0}+\beta_{1} x_{1}+...+\beta_{x} x_{x})}$
+
+## Examples
+The following examples use a [dataset](http://www.ats.ucla.edu/stat/mult_pkg/faq/general/sample.csv) that contains 200 observations about students. The binary outcome variable we will use is **hon** which indicates if a student is an honor class or not. 
+
+### Loading Libraries And Data
+```{r Load_Library, warning=F,message=F}
+library(dplyr)
+library(knitr)
+library(pander)
+```
+
+```{r Load_Data}
+hd<-read.csv("honordata.csv",sep=",")
+
+head(hd)
+```
+
+
+### Logistic Regression With No Predictor Variables
+Here we will start with a simple model without any predictors:
+$$logit(p)=\beta_{0} $$
+
+#### Fitting The Model
+```{r Ex1}
+#fit the model without any predictor
+f0<-glm(hon~1,data = hd,family = binomial)
+
+summary(f0)$coeff
+
+```
+
+As we can see:
+
+- The intercept= **`r round(coef(f0),5)`** which corresponds to **the log odds of the probability of being in an honor class $p$ **.
+
+- We can go from the log odds to the odds by exponentiating the coeffecient which gives us the odds **O=`r round(exp(coef(f0)),5)`**. 
+
+- We can go backwards to the probability by calculating $p=\frac{O}{1+O}$ = **`r exp(coef(f0))/(1+exp(coef(f0)))` **.
+
+#### Calculating The Log Odds Manually
+Let's do the math with the original data step by step to see the transformation from probablity to odds to log odds
+
+```{r}
+honor<-hd %>%
+        group_by(hon) %>%
+        summarise(freq=n(),prob=(n()/nrow(.)),odds=prob/(1-prob), logodds=log(odds)) %>%
+        round(.,5)
+
+hprob<-honor$prob[honor$hon==1]
+hodds<-honor$odds[honor$hon==1]
+hlogodds<-honor$logodds[honor$hon==1]
+
+pander(honor)
+```
+We can see that:
+
+- **The probability of being in an honor class $p$ = `r hprob`**
+
+- **The odds of the probability of being in an honor class $O$ = $\frac{`r hprob`}{`r 1-hprob`}$ = hodds**
+
+- **The log odds of the probability of being in an honor class $log(O)$ = `r hlogodds`** which is the intercept value we got from fitting the logistic regression model.
+
+
+### Logistic Regression With a Single Predictor Variable
+Here we will use a binary predictor variable **femela** in our model:
+$$logit(p)=\beta_{0}+ \beta_{1}*female$$
+
+#### Fitting The Model
+```{r Ex2}
+f1<-glm(hon~female,data = hd,family = binomial)
+
+summary(f1)$coeff
+
+```
+We can see that:
+
+- The intercept= **`r round(coef(f1)[1],5)`** which corresponds to **the log odds for males being in an honor class** (since male is the reference group, female=0).
+
+- The coeffecient for female= **`r round(coef(f1)[2],5)`** which corresponds to **the log of odds ratio between the female group and male group**. The odds ratio equals **`r round(exp(coef(f1)[2]),2)`** which means the odds for females are about 81% higher than the odds for males.
+
+#### Calculating The Log Odds Manually
+
+Here we can see the probabilites, odds and log odds for each case to compare with the logistic regression results 
+```{r}
+honor1<-hd %>%
+        group_by(female,hon) %>%
+        summarise(freq=n()) %>%
+        mutate(all=sum(freq),prob=freq/all,odds=prob/(1-prob),logodds=log(odds)) %>%
+        round(.,5)
+
+pander(honor1)
+# http://stackoverflow.com/questions/12201439/is-there-a-difference-between-the-r-functions-fitted-and-predict
+```
+
+
