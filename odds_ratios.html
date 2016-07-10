@@ -10,7 +10,6 @@
 
 <meta name="author" content="OmaymaS" />
 
-<meta name="date" content="2016-05-20" />
 
 <title>Interpreting Odd Ratios in Logistic Regression</title>
 
@@ -64,7 +63,6 @@ img {
 <div id="header">
 <h1 class="title">Interpreting Odd Ratios in Logistic Regression</h1>
 <h4 class="author"><em>OmaymaS</em></h4>
-<h4 class="date"><em>May 20, 2016</em></h4>
 </div>
 
 <div id="TOC">
@@ -73,17 +71,17 @@ img {
 <li><a href="#probability-odds-and-log-of-odds">Probability, Odds and Log of Odds</a></li>
 <li><a href="#logistic-regression">Logistic Regression</a></li>
 <li><a href="#examples">Examples</a><ul>
-<li><a href="#loading-libraries-and-data">Loading Libraries And Data</a></li>
-<li><a href="#logistic-regression-with-no-predictor-variables">Logistic Regression With No Predictor Variables</a></li>
-<li><a href="#logistic-regression-with-a-single-dichotomous-predictor-variable">Logistic Regression With a Single Dichotomous Predictor Variable</a></li>
-<li><a href="#logistic-regression-with-a-single-continuous-predictor-variable">Logistic Regression With a Single Continuous Predictor Variable</a></li>
+<li><a href="#loading-libraries-and-data">Loading Libraries and Data</a></li>
+<li><a href="#logistic-regression-with-no-predictor-variables">Logistic Regression with No Predictor Variables</a></li>
+<li><a href="#logistic-regression-with-a-single-dichotomous-predictor-variable">Logistic Regression with a Single Dichotomous Predictor Variable</a></li>
+<li><a href="#logistic-regression-with-a-single-continuous-predictor-variable">Logistic Regression with a Single Continuous Predictor Variable</a></li>
 </ul></li>
 </ul>
 </div>
 
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>Interpreting the logistic regression’s coefficients is somehow tricky. Looking at some examples beside doing the math helps getting the concept of odds, odds ratios and consequently getting more familiar with the meaning of the regression coeffecients. The following examples are mainly taken from <a href="http://www.ats.ucla.edu/stat/mult_pkg/faq/general/odds_ratio.htm">IDRE UCLE FAQ Page</a> and they are recreated with R.</p>
+<p>Interpreting the logistic regression’s coefficients is somehow tricky. Looking at some examples beside doing the math helps getting the concept of odds, odds ratios and consequently getting more familiar with the meaning of the regression coefficients. The following examples are mainly taken from <a href="http://www.ats.ucla.edu/stat/mult_pkg/faq/general/odds_ratio.htm">IDRE UCLE FAQ Page</a> and they are recreated with R.</p>
 </div>
 <div id="probability-odds-and-log-of-odds" class="section level2">
 <h2>Probability, Odds and Log of Odds</h2>
@@ -99,7 +97,7 @@ img {
 <div id="logistic-regression" class="section level2">
 <h2>Logistic Regression</h2>
 <p>Logistic regression models the the logit-transformed probability as a linear relationship with the predictor variables as follows:</p>
-<p><span class="math inline">\(logit(p)=\frac{p}{1-p}=\beta_{0}+\beta_{1} x_{1}+...+\beta_{x} x_{x}\)</span></p>
+<p><span class="math inline">\(logit(p)= log(\frac{p}{1-p})=\beta_{0}+\beta_{1} x_{1}+...+\beta_{x} x_{x}\)</span></p>
 <p>or in terms of probabilities:</p>
 <p><span class="math inline">\(p=\frac{exp(\beta_{0}+\beta_{1} x_{1}+...+\beta_{x} x_{x})}{1+exp(\beta_{0}+\beta_{1} x_{1}+...+\beta_{x} x_{x})}\)</span></p>
 </div>
@@ -107,7 +105,7 @@ img {
 <h2>Examples</h2>
 <p>The following examples use a <a href="http://www.ats.ucla.edu/stat/mult_pkg/faq/general/sample.csv">dataset</a> that contains 200 observations about students. The binary outcome variable we will use is <strong>hon</strong> which indicates if a student is an honor class or not.</p>
 <div id="loading-libraries-and-data" class="section level3">
-<h3>Loading Libraries And Data</h3>
+<h3>Loading Libraries and Data</h3>
 <pre class="r"><code>library(dplyr)
 library(knitr)
 library(pander)</code></pre>
@@ -123,7 +121,7 @@ head(hd)</code></pre>
 ## 6      0   44    52   51   0           0</code></pre>
 </div>
 <div id="logistic-regression-with-no-predictor-variables" class="section level3">
-<h3>Logistic Regression With No Predictor Variables</h3>
+<h3>Logistic Regression with No Predictor Variables</h3>
 <p>Here we will start with a simple model without any predictors: <span class="math display">\[logit(p)=\beta_{0} \]</span></p>
 <div id="fitting-the-model" class="section level4">
 <h4>Fitting The Model</h4>
@@ -136,7 +134,7 @@ summary(f0)$coeff</code></pre>
 <p>As we can see:</p>
 <ul>
 <li><p>The intercept= <strong>-1.12546</strong> which corresponds to <strong>the log odds of the probability of being in an honor class <span class="math inline">\(p\)</span> </strong>.</p></li>
-<li><p>We can go from the log odds to the odds by exponentiating the coeffecient which gives us the odds <strong>O=0.3245</strong>.</p></li>
+<li><p>We can go from the log odds to the odds by exponentiating the coefficient which gives us the odds <strong>O=0.3245</strong>.</p></li>
 <li><p>We can go backwards to the probability by calculating <span class="math inline">\(p=\frac{O}{1+O}\)</span> = <strong>0.245 </strong>.</p></li>
 </ul>
 </div>
@@ -196,7 +194,7 @@ pander(honor)</code></pre>
 </div>
 </div>
 <div id="logistic-regression-with-a-single-dichotomous-predictor-variable" class="section level3">
-<h3>Logistic Regression With a Single Dichotomous Predictor Variable</h3>
+<h3>Logistic Regression with a Single Dichotomous Predictor Variable</h3>
 <p>Here we will use a binary predictor variable <strong>female</strong> in our model: <span class="math display">\[logit(p)=\beta_{0}+ \beta_{1}*female\]</span></p>
 <div id="fitting-the-model-1" class="section level4">
 <h4>Fitting The Model</h4>
@@ -211,7 +209,7 @@ summary(f1)$coeff</code></pre>
 <p>We can see that:</p>
 <ul>
 <li><p>The intercept= <strong>-1.47085</strong> which corresponds to <strong>the log odds for males being in an honor class</strong> (since male is the reference group, female=0).</p></li>
-<li><p>The coeffecient for female= <strong>0.59278</strong> which corresponds to <strong>the log of odds ratio between the female group and male group</strong>. The odds ratio equals <strong>1.81</strong> which means <strong>the odds for females are about 81% higher than the odds for males</strong>.</p></li>
+<li><p>The coefficient for female= <strong>0.59278</strong> which corresponds to <strong>the log of odds ratio between the female group and male group</strong>. The odds ratio equals <strong>1.81</strong> which means <strong>the odds for females are about 81% higher than the odds for males</strong>.</p></li>
 </ul>
 </div>
 <div id="calculating-the-log-odds-manually-1" class="section level4">
@@ -287,7 +285,7 @@ pander(honor1)</code></pre>
 </div>
 </div>
 <div id="logistic-regression-with-a-single-continuous-predictor-variable" class="section level3">
-<h3>Logistic Regression With a Single Continuous Predictor Variable</h3>
+<h3>Logistic Regression with a Single Continuous Predictor Variable</h3>
 <p>Here we will use a single continuous predictor variable <strong>math</strong> in our mode: <span class="math display">\[logit(p)=\beta_{0}+ \beta_{1}*math\]</span></p>
 <div id="fitting-the-model-2" class="section level4">
 <h4>Fitting The Model</h4>
@@ -301,9 +299,9 @@ summary(f2)$coeff</code></pre>
 <p>In this case:</p>
 <ul>
 <li><p>The intercept= <strong>-9.79394</strong> which is interpreted as <strong>the log odds of a student with a math score of zero being in an honors class</strong>.</p></li>
-<li><p>The coeffecient for math= <strong>0.15634</strong> which is interpreted as <strong>the expected change in log odds for a one-unit increase in the math score</strong>. The odds ratio can be calculated by exponentiating this value to get <strong>1.16922</strong> which means <strong>we expect to see about 17% increase in the odds of being in an honors class, for a one-unit increase in math score</strong></p></li>
+<li><p>The coefficient for math= <strong>0.15634</strong> which is interpreted as <strong>the expected change in log odds for a one-unit increase in the math score</strong>. The odds ratio can be calculated by exponentiating this value to get <strong>1.16922</strong> which means <strong>we expect to see about 17% increase in the odds of being in an honors class, for a one-unit increase in math score</strong></p></li>
 </ul>
-<p>We can also confirm this interpretation by looking at the predicted values using the estimated coeffecients, i.e. the equation:</p>
+<p>We can also confirm this interpretation by looking at the predicted values using the estimated coefficients, i.e. the equation:</p>
 <p><span class="math inline">\(logit(p)=\frac{p}{1-p}=-9.79394+ 0.15634*math\)</span></p>
 <p>First we will add a column with the predicted values to our original data frame.</p>
 <pre class="r"><code>hd$predicted&lt;-predict(f2)</code></pre>
@@ -318,7 +316,7 @@ odd_ratio&lt;-exp(logodd_diff)</code></pre>
 <li><p><span class="math inline">\(logit(p)_{(math=54)}-logit(p)_{(math=53)}= 0.1563404\)</span></p></li>
 <li><p><span class="math inline">\(Odds_{(math=54)}/Odds_{(math=53)} = 1.1692241\)</span></p></li>
 </ul>
-<p>Which goes with our interpretation mentioned earlier.</p>
+<p>Which goes with the interpretation mentioned earlier.</p>
 </div>
 </div>
 </div>

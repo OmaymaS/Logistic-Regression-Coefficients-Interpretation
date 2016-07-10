@@ -1,15 +1,29 @@
 ---
 title: "Interpreting Odd Ratios in Logistic Regression"
 author: "OmaymaS"
-date: "May 20, 2016"
-output: 
-  html_document: 
+output:
+  html_document:
     keep_md: yes
+    toc: yes
+  pdf_document:
     toc: yes
 ---
 
+```{r, echo=F,warning=F,message=F}
+latexImg = function(latex){
+
+    link = paste0('http://latex.codecogs.com/gif.latex?',
+           gsub('\\=','%3D',URLencode(latex)))
+
+    link = gsub("(%..)","\\U\\1",link,perl=TRUE)
+    return(paste0('![](',link,')'))
+  
+}
+#use : `r latexImg('\\infty')`
+```
+
 ## Introduction
-Interpreting the logistic regression's coefficients is somehow tricky. Looking at some examples beside doing the math helps getting the concept of odds, odds ratios and consequently getting more familiar with the meaning of the regression coeffecients. The following examples are mainly taken from [IDRE UCLE FAQ Page](http://www.ats.ucla.edu/stat/mult_pkg/faq/general/odds_ratio.htm) and they are recreated with R.
+Interpreting the logistic regression's coefficients is somehow tricky. Looking at some examples beside doing the math helps getting the concept of odds, odds ratios and consequently getting more familiar with the meaning of the regression coefficients. The following examples are mainly taken from [IDRE UCLE FAQ Page](http://www.ats.ucla.edu/stat/mult_pkg/faq/general/odds_ratio.htm) and they are recreated with R.
 
 ## Probability, Odds and Log of Odds
 Let's say that the probability of success is $p=0.8$, then the probability of failure is $1-p=0.2$. The odds of success is $\frac{p}{1-p}=\frac{0.8}{1-0.8}=4$, i.e. the odds of success is 4 to 1 and the odds of failure is 0.25 to 1.
@@ -27,7 +41,7 @@ That is why the log odds are used to avoid modeling a variable with a restricted
 ## Logistic Regression
 Logistic regression models the the logit-transformed probability as a linear relationship with the predictor variables as follows:
 
-$logit(p)=\frac{p}{1-p}=\beta_{0}+\beta_{1} x_{1}+...+\beta_{x} x_{x}$
+$logit(p)= log(\frac{p}{1-p})=\beta_{0}+\beta_{1} x_{1}+...+\beta_{x} x_{x}$
 
 or in terms of probabilities:
 
@@ -36,7 +50,7 @@ $p=\frac{exp(\beta_{0}+\beta_{1} x_{1}+...+\beta_{x} x_{x})}{1+exp(\beta_{0}+\be
 ## Examples
 The following examples use a [dataset](http://www.ats.ucla.edu/stat/mult_pkg/faq/general/sample.csv) that contains 200 observations about students. The binary outcome variable we will use is **hon** which indicates if a student is an honor class or not. 
 
-### Loading Libraries And Data
+### Loading Libraries and Data
 ```{r Load_Library, warning=F,message=F}
 library(dplyr)
 library(knitr)
@@ -50,7 +64,7 @@ head(hd)
 ```
 
 
-### Logistic Regression With No Predictor Variables
+### Logistic Regression with No Predictor Variables
 Here we will start with a simple model without any predictors:
 $$logit(p)=\beta_{0} $$
 
@@ -67,7 +81,7 @@ As we can see:
 
 - The intercept= **`r round(coef(f0),5)`** which corresponds to **the log odds of the probability of being in an honor class $p$ **.
 
-- We can go from the log odds to the odds by exponentiating the coeffecient which gives us the odds **O=`r round(exp(coef(f0)),5)`**. 
+- We can go from the log odds to the odds by exponentiating the coefficient which gives us the odds **O=`r round(exp(coef(f0)),5)`**. 
 
 - We can go backwards to the probability by calculating $p=\frac{O}{1+O}$ = **`r exp(coef(f0))/(1+exp(coef(f0)))` **.
 
@@ -95,7 +109,7 @@ We can see that:
 - **The log odds of the probability of being in an honor class $log(O)$ = `r hlogodds`** which is the intercept value we got from fitting the logistic regression model.
 
 
-### Logistic Regression With a Single Dichotomous Predictor Variable
+### Logistic Regression with a Single Dichotomous Predictor Variable
 Here we will use a binary predictor variable **female** in our model:
 $$logit(p)=\beta_{0}+ \beta_{1}*female$$
 
@@ -112,7 +126,7 @@ We can see that:
 
 - The intercept= **`r round(coef(f1)[1],5)`** which corresponds to **the log odds for males being in an honor class** (since male is the reference group, female=0).
 
-- The coeffecient for female= **`r round(coef(f1)[2],5)`** which corresponds to **the log of odds ratio between the female group and male group**. The odds ratio equals **`r round(exp(coef(f1)[2]),2)`** which means **the odds for females are about 81% higher than the odds for males**.
+- The coefficient for female= **`r round(coef(f1)[2],5)`** which corresponds to **the log of odds ratio between the female group and male group**. The odds ratio equals **`r round(exp(coef(f1)[2]),2)`** which means **the odds for females are about 81% higher than the odds for males**.
 
 #### Calculating The Log Odds Manually
 
@@ -128,7 +142,7 @@ pander(honor1)
 
 ```
 
-### Logistic Regression With a Single Continuous Predictor Variable
+### Logistic Regression with a Single Continuous Predictor Variable
 Here we will use a single continuous predictor variable **math** in our mode:
 $$logit(p)=\beta_{0}+ \beta_{1}*math$$
 
@@ -143,11 +157,11 @@ In this case:
 
 - The intercept=  **`r round(coef(f2)[1],5)`** which is interpreted as **the log odds of a student with a math score of zero being in an honors class**.
 
-- The coeffecient for math= **`r round(coef(f2)[2],5)`**  which is interpreted as **the expected change in log odds for a one-unit increase in the math score**. The odds ratio can be calculated by exponentiating this value to get **`r round(exp(coef(f2)[2]),5)`** which means **we expect to see about 17% increase in the odds of being in an honors class, for a one-unit increase in math score**
+- The coefficient for math= **`r round(coef(f2)[2],5)`**  which is interpreted as **the expected change in log odds for a one-unit increase in the math score**. The odds ratio can be calculated by exponentiating this value to get **`r round(exp(coef(f2)[2]),5)`** which means **we expect to see about 17% increase in the odds of being in an honors class, for a one-unit increase in math score**
 
 
 
-We can also confirm this interpretation by looking at the predicted values using the estimated coeffecients, i.e. the equation:
+We can also confirm this interpretation by looking at the predicted values using the estimated coefficients, i.e. the equation:
 
 $logit(p)=\frac{p}{1-p}=`r round(coef(f2)[1],5)`+ `r round(coef(f2)[2],5)`*math$
 

@@ -1,9 +1,10 @@
 # Interpreting Odd Ratios in Logistic Regression
 OmaymaS  
-May 20, 2016  
+
+
 
 ## Introduction
-Interpreting the logistic regression's coefficients is somehow tricky. Looking at some examples beside doing the math helps getting the concept of odds, odds ratios and consequently getting more familiar with the meaning of the regression coeffecients. The following examples are mainly taken from [IDRE UCLE FAQ Page](http://www.ats.ucla.edu/stat/mult_pkg/faq/general/odds_ratio.htm) and they are recreated with R.
+Interpreting the logistic regression's coefficients is somehow tricky. Looking at some examples beside doing the math helps getting the concept of odds, odds ratios and consequently getting more familiar with the meaning of the regression coefficients. The following examples are mainly taken from [IDRE UCLE FAQ Page](http://www.ats.ucla.edu/stat/mult_pkg/faq/general/odds_ratio.htm) and they are recreated with R.
 
 ## Probability, Odds and Log of Odds
 Let's say that the probability of success is $p=0.8$, then the probability of failure is $1-p=0.2$. The odds of success is $\frac{p}{1-p}=\frac{0.8}{1-0.8}=4$, i.e. the odds of success is 4 to 1 and the odds of failure is 0.25 to 1.
@@ -21,7 +22,7 @@ That is why the log odds are used to avoid modeling a variable with a restricted
 ## Logistic Regression
 Logistic regression models the the logit-transformed probability as a linear relationship with the predictor variables as follows:
 
-$logit(p)=\frac{p}{1-p}=\beta_{0}+\beta_{1} x_{1}+...+\beta_{x} x_{x}$
+$logit(p)= log(\frac{p}{1-p})=\beta_{0}+\beta_{1} x_{1}+...+\beta_{x} x_{x}$
 
 or in terms of probabilities:
 
@@ -30,7 +31,7 @@ $p=\frac{exp(\beta_{0}+\beta_{1} x_{1}+...+\beta_{x} x_{x})}{1+exp(\beta_{0}+\be
 ## Examples
 The following examples use a [dataset](http://www.ats.ucla.edu/stat/mult_pkg/faq/general/sample.csv) that contains 200 observations about students. The binary outcome variable we will use is **hon** which indicates if a student is an honor class or not. 
 
-### Loading Libraries And Data
+### Loading Libraries and Data
 
 ```r
 library(dplyr)
@@ -56,7 +57,7 @@ head(hd)
 ```
 
 
-### Logistic Regression With No Predictor Variables
+### Logistic Regression with No Predictor Variables
 Here we will start with a simple model without any predictors:
 $$logit(p)=\beta_{0} $$
 
@@ -78,7 +79,7 @@ As we can see:
 
 - The intercept= **-1.12546** which corresponds to **the log odds of the probability of being in an honor class $p$ **.
 
-- We can go from the log odds to the odds by exponentiating the coeffecient which gives us the odds **O=0.3245**. 
+- We can go from the log odds to the odds by exponentiating the coefficient which gives us the odds **O=0.3245**. 
 
 - We can go backwards to the probability by calculating $p=\frac{O}{1+O}$ = **0.245 **.
 
@@ -116,7 +117,7 @@ We can see that:
 - **The log odds of the probability of being in an honor class $log(O)$ = -1.12546** which is the intercept value we got from fitting the logistic regression model.
 
 
-### Logistic Regression With a Single Dichotomous Predictor Variable
+### Logistic Regression with a Single Dichotomous Predictor Variable
 Here we will use a binary predictor variable **female** in our model:
 $$logit(p)=\beta_{0}+ \beta_{1}*female$$
 
@@ -139,7 +140,7 @@ We can see that:
 
 - The intercept= **-1.47085** which corresponds to **the log odds for males being in an honor class** (since male is the reference group, female=0).
 
-- The coeffecient for female= **0.59278** which corresponds to **the log of odds ratio between the female group and male group**. The odds ratio equals **1.81** which means **the odds for females are about 81% higher than the odds for males**.
+- The coefficient for female= **0.59278** which corresponds to **the log of odds ratio between the female group and male group**. The odds ratio equals **1.81** which means **the odds for females are about 81% higher than the odds for males**.
 
 #### Calculating The Log Odds Manually
 
@@ -168,7 +169,7 @@ pander(honor1)
    1       1     32    109  0.29358 0.41558 -0.87807 
 -----------------------------------------------------
 
-### Logistic Regression With a Single Continuous Predictor Variable
+### Logistic Regression with a Single Continuous Predictor Variable
 Here we will use a single continuous predictor variable **math** in our mode:
 $$logit(p)=\beta_{0}+ \beta_{1}*math$$
 
@@ -190,11 +191,11 @@ In this case:
 
 - The intercept=  **-9.79394** which is interpreted as **the log odds of a student with a math score of zero being in an honors class**.
 
-- The coeffecient for math= **0.15634**  which is interpreted as **the expected change in log odds for a one-unit increase in the math score**. The odds ratio can be calculated by exponentiating this value to get **1.16922** which means **we expect to see about 17% increase in the odds of being in an honors class, for a one-unit increase in math score**
+- The coefficient for math= **0.15634**  which is interpreted as **the expected change in log odds for a one-unit increase in the math score**. The odds ratio can be calculated by exponentiating this value to get **1.16922** which means **we expect to see about 17% increase in the odds of being in an honors class, for a one-unit increase in math score**
 
 
 
-We can also confirm this interpretation by looking at the predicted values using the estimated coeffecients, i.e. the equation:
+We can also confirm this interpretation by looking at the predicted values using the estimated coefficients, i.e. the equation:
 
 $logit(p)=\frac{p}{1-p}=-9.79394+ 0.15634*math$
 
@@ -220,4 +221,4 @@ We can see that:
 
 - $Odds_{(math=54)}/Odds_{(math=53)} = 1.1692241$
 
-Which goes with our interpretation mentioned earlier.
+Which goes with the interpretation mentioned earlier.
